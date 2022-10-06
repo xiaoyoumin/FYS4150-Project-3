@@ -2,7 +2,7 @@
 
 
 
-PenningTrap(float& B, float& V, float& d, int& n);
+PenningTrap PenningTrap(float B, float V, float d, int n);
 
 // Declarations of other class methods, e.g.
 void fill_random(float m, float q);

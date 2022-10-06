@@ -6,7 +6,6 @@
 
 class PenningTrap
 {
-    
     private:
         float B;
         float V;
