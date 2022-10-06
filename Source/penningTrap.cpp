@@ -3,9 +3,9 @@
 
 
 PenningTrap(float& B, float& V, float& d, int& n);
-PenningTrap_random(float& B, float& V, float& d, int& n);
 
 // Declarations of other class methods, e.g.
+void fill_random(float m, float q);
 void time_step_FE(float& dt);
 void time_step_RK4(float& dt);
 void add_particle(arma::vec& pos, arma::vec& vel, float& m, float& q);

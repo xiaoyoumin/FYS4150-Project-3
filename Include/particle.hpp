@@ -1,7 +1,8 @@
 #ifndef _Particle_
 #define _Particle_
 
-using #armadillo
+#include <armadillo>
+#include <tuple>
 
 class Particle 
 {
@@ -13,12 +14,12 @@ class Particle
         arma::vec vel;
 
     public:
-        Particle(arma::vec& pos, arma::vec& vel, float& m, float& q);
+        Particle(arma::vec pos, arma::vec vel, float m, float q);
 
         // Declarations of other class methods, e.g.
-        void time_step(arma::vec& d_pos, arma::vec& d_vel, float& dt);
-        std::tuple<arma::vec, arma::vec> get_pos_vel(arma::vec& d_pos, arma::vec& d_vel, float& dt);
-        std::tuple<arma::vec, arma::vec> get_pos_vel(arma::vec& d_pos, arma::vec& d_vel);
+        void time_step(arma::vec d_pos, arma::vec d_vel, float dt);
+        std::tuple<arma::vec, arma::vec> get_pos_vel(arma::vec d_pos, arma::vec d_vel, float dt);
+        std::tuple<arma::vec, arma::vec> get_pos_vel(arma::vec d_pos, arma::vec d_vel);
         float get_m();
         float get_q();
     
