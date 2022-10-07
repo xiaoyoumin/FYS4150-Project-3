@@ -14,16 +14,14 @@ class Particle
         arma::vec vel;
 
     public:
-        Particle(arma::vec pos, arma::vec vel, float m, float q);
+        Particle(const arma::vec& pos, const arma::vec& vel, const float& m, const float& q);
 
         // Declarations of other class methods, e.g.
-        void time_step(arma::vec d_pos, arma::vec d_vel, float dt);
-        std::tuple<arma::vec, arma::vec> get_pos_vel(arma::vec d_pos, arma::vec d_vel, float dt);
-        std::tuple<arma::vec, arma::vec> get_pos_vel(arma::vec d_pos, arma::vec d_vel);
+        void update(const arma::vec& d_pos, const arma::vec& d_vel);
+        arma::vec get_pos();
+        arma::vec get_vel();
         float get_m();
         float get_q();
-    
-
 };
 
 #endif
