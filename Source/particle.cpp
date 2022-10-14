@@ -9,10 +9,15 @@ Particle::Particle(const vec pos_, const vec vel_, double m_, double q_){
     q = q_;
 }
 
-// Declarations of other class methods, e.g.
+
 void Particle::update(const vec d_pos, const vec d_vel){
     pos = pos + d_pos;
     vel = vel + d_vel;
+}
+
+void Particle::update_temp(const vec d_pos, const vec d_vel){
+    pos_temp = pos + d_pos;
+    vel_temp = vel + d_vel;
 }
 // std::tuple<vec, vec> Particle::get_pos_vel(vec& d_pos, vec& d_vel, double& d_t);
 // std::tuple<vec, vec> Particle::get_pos_vel(vec& d_pos, vec& d_vel);
@@ -33,6 +38,11 @@ double Particle::get_q(){
 // Get the time derivative of pos and vel
 std::tuple<vec, vec> Particle::derivative(const vec F){
     return std::make_tuple(vel, F/m);
+}
+
+// Get the time derivative of pos and vel with temp offset
+std::tuple<vec, vec> Particle::derivative_temp(const vec F){
+    return std::make_tuple(vel_temp, F/m);
 }
 
 // // Get the tima derivative of pos and vel, for a particle with an offset

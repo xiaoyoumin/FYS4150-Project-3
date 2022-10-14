@@ -36,16 +36,16 @@ class PenningTrap
         arma::vec ext_B_field(const arma::vec pos);
 
         // Coulomb force
-        arma::vec force_particle(int i, int j);
+        arma::vec force_particle(int i, int j, bool temp);
 
         // The total force on particle_i from the external fields
-        arma::vec total_force_external(int i);
+        arma::vec total_force_external(int i, bool temp);
 
         // The total force on particle_i from the other particles
-        arma::vec total_force_particles(int i);
+        arma::vec total_force_particles(int i, bool temp);
 
         // The total force on particle_i from both external fields and other particles
-        arma::vec total_force(int i);
+        arma::vec total_force(int i, bool temp);
 
         Particle get_particle(int i);
 
