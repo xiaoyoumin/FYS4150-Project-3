@@ -1,13 +1,16 @@
 #include "penningTrap.hpp"
 
+
+#include <string>
+
 using namespace arma;
 
 
 // One particle
-PenningTrap::PenningTrap(double B, double V, double d){
-    B = B;
-    V = V;
-    d = d;
+PenningTrap::PenningTrap(double B_, double V_, double d_){
+    B = B_;
+    V = V_;
+    d = d_;
     particles = std::vector<Particle>();
 }
 
@@ -87,6 +90,10 @@ vec PenningTrap::total_force_particles(int i){
 vec PenningTrap::total_force(int i){
     vec F = total_force_external(i) + total_force_particles(i);
     return F;
+}
+
+Particle PenningTrap::get_particle(const int i){
+    return particles.at(i);
 }
 
 
