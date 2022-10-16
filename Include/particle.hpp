@@ -3,6 +3,10 @@
 
 #include <armadillo>
 #include <tuple>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
 
 class Particle 
 {
@@ -31,6 +35,12 @@ class Particle
         
         // Get the tima derivative of pos and vel, for a particle with a temporary offset
         std::tuple<arma::vec, arma::vec> derivative_temp(const arma::vec F);
+
+        // Write contents to file
+        std::string to_string(int width, int prec);
+
+        std::string format_value(int width, int prec, double x);
+        std::string format_value(int width, int prec, arma::vec vec);
 };
 
 #endif

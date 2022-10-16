@@ -1,6 +1,7 @@
 #include "particle.hpp"
 
 using namespace arma;
+using namespace std;
 
 Particle::Particle(const vec pos_, const vec vel_, double m_, double q_){
     pos = pos_;
@@ -45,5 +46,26 @@ std::tuple<vec, vec> Particle::derivative_temp(const vec F){
     return std::make_tuple(vel_temp, F/m);
 }
 
-// // Get the tima derivative of pos and vel, for a particle with an offset
-// std::tuple<vec, vec> Particle::derivative(const vec F, const vec d_pos, const vec d_vel);
+// Write contents to file
+string Particle::to_string(int width, int prec){
+    ostringstream out;
+    out << format_value(width, prec, m)
+    << format_value(width, prec, q)
+    << format_value(width, prec, pos)
+    << format_value(width, prec, vel);
+    return out.str();
+}
+
+string Particle::format_value(int width, int prec, double x){
+    ostringstream out;
+    out << std::setw(width) << std::setprecision(prec) << std::scientific << x;
+    return out.str();
+}
+
+string Particle::format_value(int width, int prec, arma::vec vec){
+    ostringstream out;
+    out << format_value(width, prec, vec(0))
+    << format_value(width, prec, vec(1))
+    << format_value(width, prec, vec(2));
+    return out.str();
+}

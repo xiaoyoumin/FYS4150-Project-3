@@ -1,12 +1,14 @@
 #include "penningTrap.hpp"
 
 
-#include <string>
+// #include <string>
 
 using namespace arma;
+using namespace std;
 
+PenningTrap::PenningTrap(){}
 
-// One particle
+// Constructor
 PenningTrap::PenningTrap(double B_, double V_, double d_){
     B = B_;
     V = V_;
@@ -19,90 +21,6 @@ void PenningTrap::fill_random(double m, double q, int n){
     for (int i = 0; i < n; i++){
         vec r = vec(3).randn() * 0.1 * d;  // random initial position
         vec v = vec(3).randn() * 0.1 * d;  // random initial velocity
-    }
-}
-
-// Forward Euler time step
-void PenningTrap::time_step_FE(double dt){
-    int n = particles.size();
-    mat d_pos_list = mat(3, n);
-    mat d_vel_list = mat(3, n);
-
-    for (int i = 0; i < n; i++){
-        vec d_pos;
-        vec d_vel;
-    
-        std::tie(d_pos, d_vel) = particles.at(i).derivative(total_force(i, false));
-        d_pos_list.col(i) = dt * d_pos;
-        d_vel_list.col(i) = dt * d_vel;
-    }
-    for (int i = 0; i < particles.size(); i++){
-        particles.at(i).update(d_pos_list.col(i), d_vel_list.col(i));
-    }
-}
-
-// // Runge Kutta time step
-void PenningTrap::time_step_RK4(double dt){
-    int n = particles.size();
-    mat k_1_pos = mat(3, n);
-    mat k_1_vel = mat(3, n);
-    mat k_2_pos = mat(3, n);
-    mat k_2_vel = mat(3, n);
-    mat k_3_pos = mat(3, n);
-    mat k_3_vel = mat(3, n);
-    mat k_4_pos = mat(3, n);
-    mat k_4_vel = mat(3, n);
-    vec ddt_pos;
-    vec ddt_vel;
-
-    // Calculate K1
-    for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = particles.at(i).derivative(total_force(i, false));
-        k_1_pos.col(i) = ddt_pos;
-        k_1_vel.col(i) = ddt_vel;
-    }
-
-    // Prepare the particles for calculating K2
-    for (int i = 0; i < particles.size(); i++){
-        particles.at(i).update_temp(0.5*dt*k_1_pos.col(i), 0.5*dt*k_1_vel.col(i));
-    }
-    
-    // Calculate K2
-    for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = particles.at(i).derivative(total_force(i, true));
-        k_2_pos.col(i) = ddt_pos;
-        k_2_vel.col(i) = ddt_vel;
-    }
-
-    // Prepare the particles for calculating K3
-    for (int i = 0; i < particles.size(); i++){
-        particles.at(i).update_temp(0.5*dt*k_2_pos.col(i), 0.5*dt*k_2_vel.col(i));
-    }
-    
-    // Calculate K3
-    for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = particles.at(i).derivative(total_force(i, true));
-        k_3_pos.col(i) = ddt_pos;
-        k_3_vel.col(i) = ddt_vel;
-    }
-
-    // Prepare the particles for calculating K4
-    for (int i = 0; i < particles.size(); i++){
-        particles.at(i).update_temp(dt*k_3_pos.col(i), dt*k_3_vel.col(i));
-    }
-    
-    // Calculate K4
-    for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = particles.at(i).derivative(total_force(i, true));
-        k_4_pos.col(i) = ddt_pos;
-        k_4_vel.col(i) = ddt_vel;
-    }
-
-    // Do the actual time step
-    for (int i = 0; i < particles.size(); i++){
-        particles.at(i).update(
-            dt/6.*(k_1_pos.col(i) + 2*k_2_pos.col(i) + 2*k_3_pos.col(i) + k_4_pos.col(i)),
-            dt/6.*(k_1_vel.col(i) + 2*k_2_vel.col(i) + 2*k_3_vel.col(i) + k_4_vel.col(i)));
     }
 }
 
@@ -167,6 +85,24 @@ vec PenningTrap::total_force(int i, bool temp){
 
 Particle PenningTrap::get_particle(const int i){
     return particles.at(i);
+}
+
+// Write contents to file
+string PenningTrap::to_string(int width, int prec){
+    ostringstream out;
+    out << format_value(width, prec, B)
+    << format_value(width, prec, V)
+    << format_value(width, prec, d);
+    for (int i = 0; i < particles.size(); i++){
+        out << particles.at(i).to_string(width, prec);
+    }
+    return out.str();
+}
+
+string PenningTrap::format_value(int width, int prec, double x){
+    ostringstream out;
+    out << std::setw(width) << std::setprecision(prec) << std::scientific << x;
+    return out.str();
 }
 
 

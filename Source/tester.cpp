@@ -1,3 +1,4 @@
+#include "penningTrapSim.hpp"
 #include "penningTrap.hpp"
 #include "particle.hpp"
 #include <iostream>
@@ -38,8 +39,9 @@ int test_penning_trap(){
     int n = 50;
     PenningTrap trapFE = PenningTrap(B, V, d);
     trapFE.add_particle(arma::vec{x0, 0., z0}, arma::vec{0., v0, 0.}, m, q);
+    PenningTrapSim simFE = PenningTrapSim(trapFE);
     for (int i = 0; i < n; i++){
-        trapFE.time_step_FE(0.01);
+        simFE.time_step_FE(0.01);
         // std::cout << arma::norm(trapFE.get_particle(0).get_pos()) << '\n';
     }
     // Particle p = trapFE.get_particle(0);
@@ -51,8 +53,9 @@ int test_penning_trap(){
     n = 50;
     PenningTrap trapRK = PenningTrap(B, V, d);
     trapRK.add_particle(arma::vec{x0, 0., z0}, arma::vec{0., v0, 0.}, m, q);
+    PenningTrapSim simRK = PenningTrapSim(trapRK);
     for (int i = 0; i < n; i++){
-        trapRK.time_step_RK4(0.01);
+        simRK.time_step_RK4(0.01);
         // std::cout << arma::norm(trapRK.get_particle(0).get_pos()) << '\n';
     }
 

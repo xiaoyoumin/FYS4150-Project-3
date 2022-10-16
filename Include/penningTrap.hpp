@@ -4,10 +4,12 @@
 #include "particle.hpp"
 #include <armadillo>
 #include <vector>
+#include <iomanip>
 
 
 class PenningTrap
 {
+    friend class PenningTrapSim;
     private:
         double B;
         double V;
@@ -15,17 +17,13 @@ class PenningTrap
         std::vector<Particle> particles;
 
     public:
+
+        PenningTrap();
         // One particle
         PenningTrap(double B, double V, double d);
 
         // Fill with random particles
         void fill_random(double m, double q, int n);
-
-        // Forward Euler time step
-        void time_step_FE(double dt);
-
-        // Runge Kutta time step
-        void time_step_RK4(double dt);
 
         // Add particle to trap
         void add_particle(const arma::vec pos, const arma::vec vel, double m, double q);
@@ -47,8 +45,13 @@ class PenningTrap
         // The total force on particle_i from both external fields and other particles
         arma::vec total_force(int i, bool temp);
 
+        // Get a particle
         Particle get_particle(int i);
 
+        // Write to file
+        std::string to_string(int width, int prec);
+
+        std::string format_value(int width, int prec, double x);
 };
 
 #endif
