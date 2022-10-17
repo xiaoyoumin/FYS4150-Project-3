@@ -36,6 +36,7 @@ class PenningTrapSim
         // filestream make_file(std::string filename);
 
         PenningTrap get_trap();
+        int count_particles();
 
 };
 

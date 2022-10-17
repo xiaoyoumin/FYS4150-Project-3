@@ -28,6 +28,7 @@ void PenningTrapSim::time_step_FE(double dt, bool inter){
     for (int i = 0; i < trap.particles.size(); i++){
         trap.particles.at(i).update(d_pos_list.col(i), d_vel_list.col(i));
     }
+    trap.change_time(dt);
 }
 
 // // Runge Kutta time step
@@ -55,6 +56,7 @@ void PenningTrapSim::time_step_RK4(double dt, bool inter){
     for (int i = 0; i < trap.particles.size(); i++){
         trap.particles.at(i).update_temp(0.5*dt*k_1_pos.col(i), 0.5*dt*k_1_vel.col(i));
     }
+    trap.change_time(0.5*dt);
     
     // Calculate K2
     for (int i = 0; i < n; i++){
@@ -79,6 +81,7 @@ void PenningTrapSim::time_step_RK4(double dt, bool inter){
     for (int i = 0; i < trap.particles.size(); i++){
         trap.particles.at(i).update_temp(dt*k_3_pos.col(i), dt*k_3_vel.col(i));
     }
+    trap.change_time(0.5*dt);
     
     // Calculate K4
     for (int i = 0; i < n; i++){
@@ -140,4 +143,8 @@ int PenningTrapSim::simulate(int n, double dt, bool inter, string method, string
 
 PenningTrap PenningTrapSim::get_trap(){
     return trap;
+}
+
+int PenningTrapSim::count_particles(){
+    return trap.count_particles();
 }

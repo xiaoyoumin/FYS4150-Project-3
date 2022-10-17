@@ -11,8 +11,21 @@ PenningTrap::PenningTrap(){}
 // Constructor
 PenningTrap::PenningTrap(double B_, double V_, double d_){
     B = B_;
-    V = V_;
+    V0 = V_;
     d = d_;
+    f = 0.;
+    omega = 0.;
+    t = 0.;
+    particles = std::vector<Particle>();
+}
+
+PenningTrap::PenningTrap(double B_, double V_, double d_, double f_, double omega_, double t0){
+    B = B_;
+    V0 = V_;
+    d = d_;
+    f = f_;
+    omega = omega_;
+    t = t0;
     particles = std::vector<Particle>();
 }
 
@@ -33,19 +46,48 @@ void PenningTrap::add_particle(Particle& p){
     particles.push_back(p);
 }
 
+// Update time
+void PenningTrap::change_time(double dt){
+    t += dt;
+}
+
 // Calculate E/B field
+double PenningTrap::V(){
+    return V0 * (1+f*cos(omega * t));
+}
+
 vec PenningTrap::ext_E_field(const vec pos){
-    vec E_ = {pos(0), pos(1), -2*pos(2)};
-    return V/(2*d*d)*E_;
+    if (norm(pos) > d){
+        vec E_ = {pos(0), pos(1), -2*pos(2)};
+        return V()/(2*d*d)*E_;
+    }
+    else{
+        return vec{0.,0.,0.};
+    }
 }
 vec PenningTrap::ext_B_field(const vec pos){
-    vec B_ = {0,0,B};
-    return B_;
+    if (norm(pos) > d){
+        vec B_ = {0,0,B};
+        return B_;
+    }
+    else{
+        return vec{0.,0.,0.};
+    }
 }
 
 // Coulomb force
 vec PenningTrap::force_particle(int i, int j, bool temp){
-    vec F = {0,0,0};
+    double ke = 1.38935333e5;
+    Particle p1 = particles.at(i);
+    Particle p2 = particles.at(j);
+    vec rel;
+    if (temp){
+        rel = p1.pos_temp - p2.pos_temp;
+    }
+    else{
+        rel = p1.pos - p2.pos;
+    }
+    vec F = rel * ke / (norm(rel)*norm(rel)*norm(rel));
     return F;
 }
 
@@ -97,8 +139,9 @@ Particle PenningTrap::get_particle(const int i){
 string PenningTrap::to_string(int width, int prec){
     ostringstream out;
     out << format_value(width, prec, B)
-    << format_value(width, prec, V)
-    << format_value(width, prec, d);
+    << format_value(width, prec, V())
+    << format_value(width, prec, d)
+    << format_value(width, prec, t);
     for (int i = 0; i < particles.size(); i++){
         out << particles.at(i).to_string(width, prec);
     }
@@ -111,5 +154,13 @@ string PenningTrap::format_value(int width, int prec, double x){
     return out.str();
 }
 
-
+int PenningTrap::count_particles(){
+    int count = 0;
+    for (int i = 0; i < particles.size(); i++){
+        if (norm(particles.at(i).pos) < d){
+            count++;
+        }
+    }
+    return count;
+}
 

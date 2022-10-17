@@ -5,6 +5,8 @@
 #include <armadillo>
 #include <vector>
 #include <iomanip>
+#include <string>
+#include <math.h>
 
 
 class PenningTrap
@@ -12,8 +14,11 @@ class PenningTrap
     friend class PenningTrapSim;
     private:
         double B;
-        double V;
+        double V0;
         double d;
+        double f;
+        double omega;
+        double t;
         std::vector<Particle> particles;
 
     public:
@@ -21,6 +26,7 @@ class PenningTrap
         PenningTrap();
         // One particle
         PenningTrap(double B, double V, double d);
+        PenningTrap(double B, double V, double d, double f, double omega, double t0);
 
         // Fill with random particles
         void fill_random(double m, double q, int n);
@@ -29,7 +35,11 @@ class PenningTrap
         void add_particle(const arma::vec pos, const arma::vec vel, double m, double q);
         void add_particle(Particle& p);
 
+        // Update time
+        void change_time(double dt);
+
         // Calculate E/B field
+        double V();
         arma::vec ext_E_field(const arma::vec pos);
         arma::vec ext_B_field(const arma::vec pos);
 
@@ -42,7 +52,7 @@ class PenningTrap
         // The total force on particle_i from the other particles
         arma::vec total_force_particles(int i, bool temp);
 
-        // The total force on particle_i from both external fields and other particles
+        // The total force on particle_i from both external fields [and other particles]
         arma::vec total_force(int i, bool temp, bool inter);
 
         // Get a particle
@@ -52,6 +62,8 @@ class PenningTrap
         std::string to_string(int width, int prec);
 
         std::string format_value(int width, int prec, double x);
+
+        int count_particles();
 };
 
 #endif
