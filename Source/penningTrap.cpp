@@ -78,9 +78,15 @@ vec PenningTrap::total_force_particles(int i, bool temp){
 }
 
 // The total force on particle_i from both external fields and other particles
-vec PenningTrap::total_force(int i, bool temp){
-    vec F = total_force_external(i, temp) + total_force_particles(i, temp);
-    return F;
+vec PenningTrap::total_force(int i, bool temp, bool inter){
+    if (inter){
+        vec F = total_force_external(i, temp) + total_force_particles(i, temp);
+        return F;
+    }
+    else{
+        vec F = total_force_external(i, temp);
+        return F;
+    }
 }
 
 Particle PenningTrap::get_particle(const int i){

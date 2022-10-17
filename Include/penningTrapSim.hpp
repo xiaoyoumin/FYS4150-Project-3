@@ -24,14 +24,14 @@ class PenningTrapSim
         PenningTrapSim(PenningTrap trap_);
 
         // Forward Euler time step
-        void time_step_FE(double dt);
+        void time_step_FE(double dt, bool inter);
 
         // Runge Kutta time step
-        void time_step_RK4(double dt);
+        void time_step_RK4(double dt, bool inter);
 
         // Multiple step simulation
-        int simulate(int n, double dt, std::string method);
-        int simulate(int n, double dt, std::string method, std::string logFile);
+        int simulate(int n, double dt, bool inter, std::string method);
+        int simulate(int n, double dt, bool inter, std::string method, std::string logFile);
         // void simulate(int n, double dt, filestream logFile);
         // filestream make_file(std::string filename);
 

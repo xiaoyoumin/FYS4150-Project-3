@@ -43,7 +43,7 @@ class PenningTrap
         arma::vec total_force_particles(int i, bool temp);
 
         // The total force on particle_i from both external fields and other particles
-        arma::vec total_force(int i, bool temp);
+        arma::vec total_force(int i, bool temp, bool inter);
 
         // Get a particle
         Particle get_particle(int i);

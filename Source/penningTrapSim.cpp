@@ -12,7 +12,7 @@ PenningTrapSim::PenningTrapSim(PenningTrap trap_){
 }
 
 // Forward Euler time step
-void PenningTrapSim::time_step_FE(double dt){
+void PenningTrapSim::time_step_FE(double dt, bool inter){
     int n = trap.particles.size();
     mat d_pos_list = mat(3, n);
     mat d_vel_list = mat(3, n);
@@ -21,7 +21,7 @@ void PenningTrapSim::time_step_FE(double dt){
         vec d_pos;
         vec d_vel;
     
-        std::tie(d_pos, d_vel) = trap.particles.at(i).derivative(trap.total_force(i, false));
+        std::tie(d_pos, d_vel) = trap.particles.at(i).derivative(trap.total_force(i, false, inter));
         d_pos_list.col(i) = dt * d_pos;
         d_vel_list.col(i) = dt * d_vel;
     }
@@ -31,7 +31,7 @@ void PenningTrapSim::time_step_FE(double dt){
 }
 
 // // Runge Kutta time step
-void PenningTrapSim::time_step_RK4(double dt){
+void PenningTrapSim::time_step_RK4(double dt, bool inter){
     int n = trap.particles.size();
     mat k_1_pos = mat(3, n);
     mat k_1_vel = mat(3, n);
@@ -46,7 +46,7 @@ void PenningTrapSim::time_step_RK4(double dt){
 
     // Calculate K1
     for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, false));
+        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, false, inter));
         k_1_pos.col(i) = ddt_pos;
         k_1_vel.col(i) = ddt_vel;
     }
@@ -58,7 +58,7 @@ void PenningTrapSim::time_step_RK4(double dt){
     
     // Calculate K2
     for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, true));
+        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, true, inter));
         k_2_pos.col(i) = ddt_pos;
         k_2_vel.col(i) = ddt_vel;
     }
@@ -70,7 +70,7 @@ void PenningTrapSim::time_step_RK4(double dt){
     
     // Calculate K3
     for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, true));
+        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, true, inter));
         k_3_pos.col(i) = ddt_pos;
         k_3_vel.col(i) = ddt_vel;
     }
@@ -82,7 +82,7 @@ void PenningTrapSim::time_step_RK4(double dt){
     
     // Calculate K4
     for (int i = 0; i < n; i++){
-        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, true));
+        std::tie(ddt_pos, ddt_vel) = trap.particles.at(i).derivative(trap.total_force(i, true, inter));
         k_4_pos.col(i) = ddt_pos;
         k_4_vel.col(i) = ddt_vel;
     }
@@ -96,29 +96,29 @@ void PenningTrapSim::time_step_RK4(double dt){
 }
 
 
-int PenningTrapSim::simulate(int n, double dt, string method){
+int PenningTrapSim::simulate(int n, double dt, bool inter, string method){
     if (method == "FE"){
         for (int i = 0; i < n; i++){
-            time_step_FE(dt);
+            time_step_FE(dt, inter);
         }
         return 0;
     }
     if (method == "RK"){
         for (int i = 0; i < n; i++){
-            time_step_RK4(dt);
+            time_step_RK4(dt, inter);
         }
         return 0;
     }
     return 1;
 }
 
-int PenningTrapSim::simulate(int n, double dt, string method, string logFile){
+int PenningTrapSim::simulate(int n, double dt, bool inter, string method, string logFile){
     ofstream stream;
     stream.open(logFile);
 
     if (method == "FE"){
         for (int i = 0; i < n; i++){
-            time_step_FE(dt);
+            time_step_FE(dt, inter);
             stream << trap.to_string(12, 4);
             stream << '\n';
         }
@@ -127,7 +127,7 @@ int PenningTrapSim::simulate(int n, double dt, string method, string logFile){
     }
     if (method == "RK"){
         for (int i = 0; i < n; i++){
-            time_step_RK4(dt);
+            time_step_RK4(dt, inter);
             stream << trap.to_string(12, 4);
             stream << '\n';
         }
