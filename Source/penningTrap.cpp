@@ -29,11 +29,42 @@ PenningTrap::PenningTrap(double B_, double V_, double d_, double f_, double omeg
     particles = std::vector<Particle>();
 }
 
+void PenningTrap::update_pars(double B_, double V_, double d_, double f_, double omega_, double t0){
+    B = B_;
+    V0 = V_;
+    d = d_;
+    f = f_;
+    omega = omega_;
+    t = t0;
+}
+
+void PenningTrap::update_pars(double f_, double omega_, double t0){
+    f = f_;
+    omega = omega_;
+    t = t0;
+}
+
+void PenningTrap::update_pars(double omega_, double t0){
+    omega = omega_;
+    t = t0;
+}
+
 // Fill with random particles
 void PenningTrap::fill_random(double m, double q, int n){
     for (int i = 0; i < n; i++){
         vec r = vec(3).randn() * 0.1 * d;  // random initial position
         vec v = vec(3).randn() * 0.1 * d;  // random initial velocity
+        add_particle(r, v, m, q);
+    }
+}
+
+// Reset particle positions to random values
+void PenningTrap::reset_random(){
+    Particle p;
+    for (int i = 0; i < particles.size(); i++){
+        p = particles.at(i);
+        p.pos = vec(3).randn() * 0.1 * d;  // random position
+        p.vel = vec(3).randn() * 0.1 * d;  // random velocity
     }
 }
 
@@ -42,6 +73,7 @@ void PenningTrap::add_particle(const vec pos, const vec vel, double m, double q)
     Particle p = Particle(pos, vel, m, q);
     PenningTrap::add_particle(p);
 }
+
 void PenningTrap::add_particle(Particle& p){
     particles.push_back(p);
 }

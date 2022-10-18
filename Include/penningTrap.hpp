@@ -28,8 +28,14 @@ class PenningTrap
         PenningTrap(double B, double V, double d);
         PenningTrap(double B, double V, double d, double f, double omega, double t0);
 
+        void update_pars(double B, double V, double d, double f, double omega, double t0);
+        void update_pars(double f, double omega, double t0);
+        void update_pars(double omega, double t0);
+
         // Fill with random particles
         void fill_random(double m, double q, int n);
+        // Reset particle positions and velocities to random values
+        void reset_random();
 
         // Add particle to trap
         void add_particle(const arma::vec pos, const arma::vec vel, double m, double q);

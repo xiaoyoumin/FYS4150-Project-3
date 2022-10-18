@@ -20,6 +20,7 @@ class Particle
         arma::vec vel_temp;
 
     public:
+        Particle();
         Particle(const arma::vec pos, const arma::vec vel, double m, double q);
 
         // Declarations of other class methods, e.g.

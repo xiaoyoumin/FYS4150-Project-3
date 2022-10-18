@@ -11,6 +11,12 @@ PenningTrapSim::PenningTrapSim(PenningTrap trap_){
     trap = trap_;
 }
 
+// Reset the trap to randomised starting state, update omega, and reset t
+void PenningTrapSim::reset(double omega, double t0){
+    trap.update_pars(omega, t0);
+    trap.reset_random();
+}
+
 // Forward Euler time step
 void PenningTrapSim::time_step_FE(double dt, bool inter){
     int n = trap.particles.size();
@@ -145,6 +151,7 @@ PenningTrap PenningTrapSim::get_trap(){
     return trap;
 }
 
+// Count the number of particles within distance d of the center of the trap
 int PenningTrapSim::count_particles(){
     return trap.count_particles();
 }

@@ -3,6 +3,8 @@
 using namespace arma;
 using namespace std;
 
+Particle::Particle(){}
+
 Particle::Particle(const vec pos_, const vec vel_, double m_, double q_){
     pos = pos_;
     vel = vel_;

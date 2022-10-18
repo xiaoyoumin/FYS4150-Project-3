@@ -20,8 +20,10 @@ class PenningTrapSim
 
     public:
         // Constructor
-        // TrapSim();
         PenningTrapSim(PenningTrap trap_);
+
+        // Reset the trap to randomised starting state, update omega, and reset t
+        void reset(double omega, double t0);
 
         // Forward Euler time step
         void time_step_FE(double dt, bool inter);
@@ -32,10 +34,10 @@ class PenningTrapSim
         // Multiple step simulation
         int simulate(int n, double dt, bool inter, std::string method);
         int simulate(int n, double dt, bool inter, std::string method, std::string logFile);
-        // void simulate(int n, double dt, filestream logFile);
-        // filestream make_file(std::string filename);
 
         PenningTrap get_trap();
+
+        // Count the number of particles within distance d of the center of the trap
         int count_particles();
 
 };
