@@ -37,6 +37,7 @@ void run_frequency_sweep(double f, double omega_min, double omega_max, double d_
         stream << setw(width) << setprecision(prec) << scientific << f
                << setw(width) << setprecision(prec) << scientific << omega
                << "  " << count << '\n';
+        cout << to_string(omega) << '\n';
     }
     stream.close();
 }

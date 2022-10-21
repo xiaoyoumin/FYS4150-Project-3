@@ -62,7 +62,7 @@ void PenningTrap::fill_random(double m, double q, int n){
 void PenningTrap::reset_random(){
     Particle p;
     for (int i = 0; i < particles.size(); i++){
-        p = particles.at(i);
+        p = particles[i];
         p.pos = vec(3).randn() * 0.1 * d;  // random position
         p.vel = vec(3).randn() * 0.1 * d;  // random velocity
     }
@@ -110,8 +110,8 @@ vec PenningTrap::ext_B_field(const vec pos){
 // Coulomb force
 vec PenningTrap::force_particle(int i, int j, bool temp){
     double ke = 1.38935333e5;
-    Particle p1 = particles.at(i);
-    Particle p2 = particles.at(j);
+    Particle p1 = particles[i];
+    Particle p2 = particles[j];
     vec rel;
     if (temp){
         rel = p1.pos_temp - p2.pos_temp;
@@ -125,7 +125,7 @@ vec PenningTrap::force_particle(int i, int j, bool temp){
 
 // The total force on particle_i from the external fields
 vec PenningTrap::total_force_external(int i, bool temp){
-    Particle p = particles.at(i);
+    Particle p = particles[i];
     vec E, B, F;
     if (temp){
         E = ext_E_field(p.pos_temp);
@@ -175,7 +175,7 @@ string PenningTrap::to_string(int width, int prec){
     << format_value(width, prec, d)
     << format_value(width, prec, t);
     for (int i = 0; i < particles.size(); i++){
-        out << particles.at(i).to_string(width, prec);
+        out << particles[i].to_string(width, prec);
     }
     return out.str();
 }
@@ -189,7 +189,7 @@ string PenningTrap::format_value(int width, int prec, double x){
 int PenningTrap::count_particles(){
     int count = 0;
     for (int i = 0; i < particles.size(); i++){
-        if (norm(particles.at(i).pos) < d){
+        if (norm(particles[i].pos) < d){
             count++;
         }
     }
