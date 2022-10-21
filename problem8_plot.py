@@ -30,7 +30,7 @@ def values(n):
         x1, x2, x3 = [], [], []
         v1, v2, v3 = [], [], []
         for line in lines:
-            vals = line.split("\t")
+            vals = line.split()
             B.append(float(vals[0]))
             V.append(float(vals[1]))
             d.append(float(vals[2]))
