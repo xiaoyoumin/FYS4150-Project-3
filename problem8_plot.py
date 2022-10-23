@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from mpl_toolkits import mplot3d
 
 """
 each row consists of: B | V | d | t | [m | q | x1 | x2 | x3 | v1 | v2 | v3]
@@ -23,7 +24,7 @@ print(x[3])
 
 def values(n):                            
     #[m | q | x1 | x2 | x3 | v1 | v2 | v3]
-    with open(f"../Data/{n}.txt") as f:
+    with open(f"Data/{n}.txt") as f:
         lines = f.readlines()
         B, V, d, t = [], [], [], []
         m, q = [], []
@@ -43,62 +44,154 @@ def values(n):
             v1.append(float(vals[9]))
             v2.append(float(vals[10]))
             v3.append(float(vals[11]))
+
+        B=np.array(B)
+        V=np.array(V)
+        d=np.array(d)
+        t=np.array(t)
+        m=np.array(m)
+        q=np.array(q)
+        x1=np.array(x1)
+        x2=np.array(x2)
+        x3=np.array(x3)
+        v1=np.array(v1)
+        v2=np.array(v2)
+        v3=np.array(v3)
     
     return  B, V, d, t, m, q, x1, x2, x3, v1, v2, v3 
-        
-    #v=np.array(v)[1:-1]
-    #x=np.array(x)[1:-1]
-
-def rel_error(u, v):                    #calculates relative error
-    u, v = np.array(u), np.array(v)
-
-    log10eps = np.zeros(len(u))
-    for i in range(0, len(u)):
-        log10eps = np.log10(abs((u[i] - v[i])/u[i]))
-
-    return log10eps #np.log10(abs((u-v)/u)) #this is perhaps faster and better?
-
-#real = rel_error(u, x)
-
-def plot_file(filename):
-    B, V, d, t, m, q, x1, x2, x3, v1, v2, v3  = values(filename)
-
-    plt.title(f'z position over time from a {filename}')
-    plt.ylabel('z-position')
-    plt.xlabel('time')
-    plt.plot(x3, t)
-    plt.show()
-
-    plt.title(f'x and y position from a {filename}')
-    plt.ylabel('y-position')
-    plt.xlabel('x-position')
-    plt.plot(x1, x2)
-    plt.show()
-
-    plt.title(f'velocity in x-direction as a function of x position from a {filename}')
-    plt.ylabel('x-velocity')
-    plt.xlabel('x-position')
-    plt.plot(x1, v1)
-    plt.show()
-
-    plt.title(f'velocity in z-direction as a function of z position from a {filename}')
-    plt.ylabel('z-velocity')
-    plt.xlabel('z-position')
-    plt.plot(x1, v1)
-    plt.show()
-
-    
 
 
+#files = ['singleParticle_FE_4000', 'singleParticle_FE_8000', 'singleParticle_FE_16000',
+#         'singleParticle_FE_32000', 'singleParticle_RK_4000', 'singleParticle_RK_8000', 
+#         'singleParticle_RK_16000', 'singleParticle_RK_32000', 'twoParticle_RK_4000',
+#          'twoParticle_RK_8000', 'twoParticle_RK_16000', 'twoParticle_RK_32000' ]
+#filenames for ease of access
+
+
+#Plots
+B, V, d, t, m, q, x1, x2, x3, v1, v2, v3  = values("singleParticle_RK_32000")
+Bi, Vi, di, ti, mi, qi, x1i, x2i, x3i, v1i, v2i, v3i  = values("twoParticle_RK_32000")
+
+plt.plot(x1, x2,label="without interactions")
+plt.ylabel('y-pos')
+plt.xlabel('x-pos')
+plt.plot(x1i, x2i,label="with interactions")
+plt.title("Particle position x/y plane")
+plt.legend()
+plt.show()
+
+plt.plot(x1, v1,label="without interactions")
+plt.ylabel('velocity')
+plt.xlabel('position')
+plt.plot(x1i, v1i,label="with interactions")
+plt.title("Phase Space Plot x-axis")
+plt.legend()
+plt.show()
+
+plt.plot(x3, v3,label="without interactions")
+plt.ylabel('velocity')
+plt.xlabel('position')
+plt.plot(x3i, v3i,label="with interactions")
+plt.title("Phase Space Plot z-axis")
+plt.legend()
+plt.show()
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot3D(x1, x2, x3,label="without interactions")
+ax.plot3D(x1i, x2i, x3i,label="with interactions")
+ax.set_title("Particle 3D position")
+ax.legend()
+plt.show()
+
+
+def f(B, V, d, t, m, q, x1, x3, v2):#analytical function
+    V0=V[0]
+    v0=v2[0]
+    z0=x3[0]
+    x0=x1[0]
+    B0=B[0]
+
+    w0=q*B0/m
+    wz=(2*q*V0/(m*d**2))**0.5
+    wp=(w0+(w0**2-2*wz**2)**0.5)/2
+    wm=(w0-(w0**2-2*wz**2)**0.5)/2
+    Ap=(v0+wm*x0)/(wm-wp)
+    Am=-(v0+wp*x0)/(wm-wp)
+    f=Ap*np.exp(-1j*(wp*t))+Am*np.exp(-1j*(wm*t))
+    return f.real,f.imag,z0*np.cos(wz*t)
 
 
 
-files = ['singleParticle_FE_4000', 'singleParticle_FE_8000', 'singleParticle_FE_16000',
-         'singleParticle_FE_32000', 'singleParticle_RK_4000', 'singleParticle_RK_8000', 
-         'singleParticle_RK_16000', 'singleParticle_RK_32000', 'twoParticle_RK_4000',
-          'twoParticle_RK_8000', 'twoParticle_RK_16000', 'twoParticle_RK_32000' ]
 
 
-for i in range(len(files)):
-    plot_file(files[i])
+x,y,z=f(B, V, d, t, m, q, x1, x3, v2)
 
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot3D(x, y, z,label="analytical solution")
+ax.plot3D(x1, x2, x3,label="simulated solution")
+ax.set_title("Analytical Particle 3D position")
+ax.legend()
+plt.show()
+
+#Find relative error
+B, V, d, t, m, q, x4000, y4000, z4000, v1, v2, v3  = values("singleParticle_RK_4000")
+x4,y4,z4=f(B, V, d, t, m, q, x4000, z4000, v2)
+pos4=np.dstack((x4,y4,z4))
+
+B, V, d, t, m, q, x8000, y8000, z8000, v1, v2, v3  = values("singleParticle_RK_8000")
+x8,y8,z8=f(B, V, d, t, m, q, x8000, z8000, v2)
+pos8=np.dstack((x8,y8,z8))
+
+B, V, d, t, m, q, x16000, y16000, z16000, v1, v2, v3  = values("singleParticle_RK_16000")
+x16,y16,z16=f(B, V, d, t, m, q, x16000, z16000, v2)
+pos16=np.dstack((x16,y16,z16))
+
+B, V, d, t, m, q, x32000, y32000, z32000, v1, v2, v3  = values("singleParticle_RK_32000")
+x32,y32,z32=f(B, V, d, t, m, q, x32000, z32000, v2)
+pos32=np.dstack((x32,y32,z32))
+
+pos4000=np.dstack((x4000,y4000,z4000))
+pos8000=np.dstack((x8000,y8000,z8000))
+pos16000=np.dstack((x16000,y16000,z16000))
+pos32000=np.dstack((x32000,y32000,z32000))
+
+
+
+def element_wise_norm(A):
+    return np.array([np.linalg.norm(v) for v in A[0]])
+def relative(actual,expected):
+    return np.abs(np.divide(np.abs(element_wise_norm(actual-expected)),np.abs(element_wise_norm(expected))))
+h=np.linspace(0,50,4000)
+y=np.interp(h,np.linspace(0,50,4000),np.log(relative(pos4000,pos4)))
+plt.plot(h,y)
+y=np.interp(h,np.linspace(0,50,8000),np.log(relative(pos8000,pos8)))
+plt.plot(h,y)
+y=np.interp(h,np.linspace(0,50,16000),np.log(relative(pos16000,pos16)))
+plt.plot(h,y)
+y=np.interp(h,np.linspace(0,50,32000),np.log(relative(pos32000,pos32)))
+plt.plot(h,y)
+plt.show()
+
+
+
+#Find the error convergence rate
+max4=(pos4000-pos4)
+max4=[np.linalg.norm(i) for i in max4]
+max8=(pos8000-pos8)
+max8=[np.linalg.norm(i) for i in max8]
+max16=(pos16000-pos16)
+max16=[np.linalg.norm(i) for i in max16]
+max32=(pos32000-pos32)
+max32=[np.linalg.norm(i) for i in max32]
+max=[max4,max8,max16,max32]
+def rerr(max):
+    s=0
+    n=np.array([4000,8000,16000,32000])
+    h=50/n
+    for k in range(1,4):
+        s+=np.log(np.divide(max[k],max[k-1]))/np.log(h[k]/h[k-1])
+    s*=(1/3)
+    return s
+print(rerr(max))
