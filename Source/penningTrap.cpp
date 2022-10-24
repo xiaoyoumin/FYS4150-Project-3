@@ -91,7 +91,7 @@ double PenningTrap::V(){
 vec PenningTrap::ext_E_field(const vec pos){
     if (norm(pos) < d){
         vec E_ = {pos(0), pos(1), -2*pos(2)};
-        return V()/(2*d*d)*E_;
+        return V()/(d*d)*E_;
     }
     else{
         return vec{0.,0.,0.};
