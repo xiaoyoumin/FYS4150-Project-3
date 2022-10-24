@@ -11,18 +11,23 @@ consist of mass, charge and position set of particle 1,
 
 """
 
-"""
-opening our  txt files from problem 8 using pythons built in 'open'
+def f(B, V, d, t, m, q, x1, x3, v2):#analytical function
+    V0=V[0]
+    v0=v2[0]
+    z0=x3[0]
+    x0=x1[0]
+    B0=B[0]
 
-file_x = open('problem2_x.txt')
-for values in file_x:
-    numbers = values.split(" ")
-    x = np.array(numbers)
-print(x[3])
+    w0=q*B0/m
+    wz=(2*q*V0/(m*d**2))**0.5
+    wp=(w0+(w0**2-2*wz**2)**0.5)/2
+    wm=(w0-(w0**2-2*wz**2)**0.5)/2
+    Ap=(v0+wm*x0)/(wm-wp)
+    Am=-(v0+wp*x0)/(wm-wp)
+    f=Ap*np.exp(-1j*(wp*t))+Am*np.exp(-1j*(wm*t))
+    return f.real,f.imag,z0*np.cos(wz*t)
 
-"""
-
-def values(n):                            
+def values(n):#Returns values from file n                   
     #[m | q | x1 | x2 | x3 | v1 | v2 | v3]
     with open(f"Data/{n}.txt") as f:
         lines = f.readlines()
@@ -71,29 +76,46 @@ def values(n):
 #Plots
 B, V, d, t, m, q, x1, x2, x3, v1, v2, v3  = values("singleParticle_RK_32000")
 Bi, Vi, di, ti, mi, qi, x1i, x2i, x3i, v1i, v2i, v3i  = values("twoParticle_RK_32000")
+V0=V[0]
+wz=(2*q*V0/(m*d**2))**0.5
+plt.plot(t,v3,label="motion in z direction")
+plt.ylabel('z-velocity')
+plt.xlabel('time (microseconds)')
+plt.plot(t,np.cos(wz*t),label="cos(wt*t)")
+plt.title("Particle motion in z direction")
+plt.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Particle motion in z direction.pdf")
+plt.show()
 
 plt.plot(x1, x2,label="without interactions")
-plt.ylabel('y-pos')
-plt.xlabel('x-pos')
+plt.ylabel('y-position')
+plt.xlabel('x-position')
 plt.plot(x1i, x2i,label="with interactions")
 plt.title("Particle position x/y plane")
 plt.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Particle position x-y plane.pdf")
 plt.show()
 
 plt.plot(x1, v1,label="without interactions")
-plt.ylabel('velocity')
-plt.xlabel('position')
+plt.ylabel('x-velocity')
+plt.xlabel('x-position')
 plt.plot(x1i, v1i,label="with interactions")
 plt.title("Phase Space Plot x-axis")
 plt.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Phase Space Plot x-axis.pdf")
 plt.show()
 
 plt.plot(x3, v3,label="without interactions")
-plt.ylabel('velocity')
-plt.xlabel('position')
+plt.ylabel('z-velocity')
+plt.xlabel('z-position')
 plt.plot(x3i, v3i,label="with interactions")
 plt.title("Phase Space Plot z-axis")
 plt.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Phase Space Plot z-axis.pdf")
 plt.show()
 
 fig = plt.figure()
@@ -101,29 +123,13 @@ ax = plt.axes(projection='3d')
 ax.plot3D(x1, x2, x3,label="without interactions")
 ax.plot3D(x1i, x2i, x3i,label="with interactions")
 ax.set_title("Particle 3D position")
+ax.set_xlabel("x-position")
+ax.set_ylabel("y-position")
+ax.set_zlabel("z-position")
 ax.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Particle 3D position.pdf")
 plt.show()
-
-
-def f(B, V, d, t, m, q, x1, x3, v2):#analytical function
-    V0=V[0]
-    v0=v2[0]
-    z0=x3[0]
-    x0=x1[0]
-    B0=B[0]
-
-    w0=q*B0/m
-    wz=(2*q*V0/(m*d**2))**0.5
-    wp=(w0+(w0**2-2*wz**2)**0.5)/2
-    wm=(w0-(w0**2-2*wz**2)**0.5)/2
-    Ap=(v0+wm*x0)/(wm-wp)
-    Am=-(v0+wp*x0)/(wm-wp)
-    f=Ap*np.exp(-1j*(wp*t))+Am*np.exp(-1j*(wm*t))
-    return f.real,f.imag,z0*np.cos(wz*t)
-
-
-
-
 
 x,y,z=f(B, V, d, t, m, q, x1, x3, v2)
 
@@ -132,10 +138,16 @@ ax = plt.axes(projection='3d')
 ax.plot3D(x, y, z,label="analytical solution")
 ax.plot3D(x1, x2, x3,label="simulated solution")
 ax.set_title("Analytical Particle 3D position")
+ax.set_xlabel("x-position")
+ax.set_ylabel("y-position")
+ax.set_zlabel("z-position")
 ax.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Analytical Particle 3D position.pdf")
 plt.show()
 
 #Find relative error
+#Store positions and change dimensions
 B, V, d, t, m, q, x4000, y4000, z4000, v1, v2, v3  = values("singleParticle_RK_4000")
 x4,y4,z4=f(B, V, d, t, m, q, x4000, z4000, v2)
 pos4=np.dstack((x4,y4,z4))
@@ -157,41 +169,52 @@ pos8000=np.dstack((x8000,y8000,z8000))
 pos16000=np.dstack((x16000,y16000,z16000))
 pos32000=np.dstack((x32000,y32000,z32000))
 
-
-
 def element_wise_norm(A):
     return np.array([np.linalg.norm(v) for v in A[0]])
+
 def relative(actual,expected):
     return np.abs(np.divide(np.abs(element_wise_norm(actual-expected)),np.abs(element_wise_norm(expected))))
+
+#interpolation is done to be able to dee the errors next to each other
 h=np.linspace(0,50,4000)
 y=np.interp(h,np.linspace(0,50,4000),np.log(relative(pos4000,pos4)))
-plt.plot(h,y)
+plt.plot(h,y,label="RK4000")
 y=np.interp(h,np.linspace(0,50,8000),np.log(relative(pos8000,pos8)))
-plt.plot(h,y)
+plt.plot(h,y,label="RK8000")
 y=np.interp(h,np.linspace(0,50,16000),np.log(relative(pos16000,pos16)))
-plt.plot(h,y)
+plt.plot(h,y,label="RK16000")
 y=np.interp(h,np.linspace(0,50,32000),np.log(relative(pos32000,pos32)))
-plt.plot(h,y)
+plt.plot(h,y,label="RK32000")
+plt.legend()
+plt.title("Relative error over time in logarithmic scale")
+plt.xlabel("time (microseconds)")
+plt.ylabel("Relative error")
+plt.savefig("Problem8Output/Relative error over time in logarithmic scale.pdf")
 plt.show()
-
-
 
 #Find the error convergence rate
 max4=(pos4000-pos4)
-max4=[np.linalg.norm(i) for i in max4]
+max4=np.amax(element_wise_norm(max4))
+
 max8=(pos8000-pos8)
-max8=[np.linalg.norm(i) for i in max8]
+max8=np.amax(element_wise_norm(max8))
+
 max16=(pos16000-pos16)
-max16=[np.linalg.norm(i) for i in max16]
+max16=np.amax(element_wise_norm(max16))
+
 max32=(pos32000-pos32)
-max32=[np.linalg.norm(i) for i in max32]
+max32=np.amax(element_wise_norm(max32))
+
 max=[max4,max8,max16,max32]
+
 def rerr(max):
     s=0
     n=np.array([4000,8000,16000,32000])
     h=50/n
     for k in range(1,4):
-        s+=np.log(np.divide(max[k],max[k-1]))/np.log(h[k]/h[k-1])
+        s+=(np.log(max[k]/max[k-1])/np.log(h[k]/h[k-1]))
     s*=(1/3)
     return s
-print(rerr(max))
+
+print("Error convergence rate:",rerr(max))
+#Error convergence rate: 0.997724175604406
