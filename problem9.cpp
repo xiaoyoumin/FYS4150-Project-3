@@ -9,31 +9,30 @@
 using namespace std;
 
 
-int frequency_survivors(PenningTrapSim& sim, double omega, double t, int n_steps, bool inter, string method){
-    sim.reset(omega, 0);
-    sim.simulate(n_steps, t/n_steps, inter, method);
-    return sim.count_particles();
-}
-
-void run_frequency_sweep(double f, double omega_min, double omega_max, double d_omega, int n_particles, double t, int n_steps, bool inter, string filename){
+int frequency_survivors(double f, double omega, double t, int n_steps, int n_particles, bool inter, string method){
     double B = 9.65e1;
     double V = 2.41e6;
     double d = 500;
 
     double m = 40.078;
     double q = 1.;
-
-    PenningTrap trap = PenningTrap(B, V, d, f, omega_min, 0);
+    
+    PenningTrap trap = PenningTrap(B, V, d, f, omega, 0);
     trap.fill_random(m, q, n_particles);
     PenningTrapSim sim = PenningTrapSim(trap);
+    sim.simulate(n_steps, t/n_steps, inter, method);
+    return sim.count_particles();
+}
 
+void run_frequency_sweep(double f, double omega_min, double omega_max, double d_omega, int n_particles, double t, int n_steps, bool inter, string filename){
+    
     ofstream stream;
     stream.open(filename);
     int count;
     int width = 12;
     int prec = 4;
     for (double omega = omega_min; omega < omega_max; omega += d_omega){
-        count = frequency_survivors(sim, omega, t, n_steps, inter, "RK");
+        count = frequency_survivors(f, omega, t, n_steps, n_particles, inter, "RK");
         stream << setw(width) << setprecision(prec) << scientific << f
                << setw(width) << setprecision(prec) << scientific << omega
                << "  " << count << '\n';
