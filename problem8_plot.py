@@ -27,7 +27,7 @@ def f(B, V, d, t, m, q, x1, x3, v2):#analytical function
     f=Ap*np.exp(-1j*(wp*t))+Am*np.exp(-1j*(wm*t))
     return f.real,f.imag,z0*np.cos(wz*t)
 
-def values(n):#Returns values from file n                   
+def values(n,two=False):#Returns values from file n                   
     #[m | q | x1 | x2 | x3 | v1 | v2 | v3]
     with open(f"Data/{n}.txt") as f:
         lines = f.readlines()
@@ -35,6 +35,8 @@ def values(n):#Returns values from file n
         m, q = [], []
         x1, x2, x3 = [], [], []
         v1, v2, v3 = [], [], []
+
+        x1i, x2i, x3i = [], [], []
         for line in lines:
             vals = line.split()
             B.append(float(vals[0]))
@@ -49,6 +51,10 @@ def values(n):#Returns values from file n
             v1.append(float(vals[9]))
             v2.append(float(vals[10]))
             v3.append(float(vals[11]))
+            if two:
+                x1i.append(float(vals[14]))
+                x2i.append(float(vals[15]))
+                x3i.append(float(vals[16]))
 
         B=np.array(B)
         V=np.array(V)
@@ -62,6 +68,8 @@ def values(n):#Returns values from file n
         v1=np.array(v1)
         v2=np.array(v2)
         v3=np.array(v3)
+        if two:
+            return x1,x2,x3,x1i,x2i,x3i
     
     return  B, V, d, t, m, q, x1, x2, x3, v1, v2, v3 
 
@@ -74,6 +82,21 @@ def values(n):#Returns values from file n
 
 
 #Plots
+x1,x2,x3,x1i,x2i,x3i=values("twoParticle_RK_32000",True)
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot3D(x1, x2, x3,label="Particle 1")
+ax.plot3D(x1i, x2i, x3i,label="Particle 2")
+ax.set_title("Two particle 3D position")
+ax.set_xlabel("x-position")
+ax.set_ylabel("y-position")
+ax.set_zlabel("z-position")
+ax.legend()
+plt.axis("equal")
+plt.savefig("Problem8Output/Two particles 3D position.pdf")
+plt.show()
+
+
 B, V, d, t, m, q, x1, x2, x3, v1, v2, v3  = values("singleParticle_RK_32000")
 Bi, Vi, di, ti, mi, qi, x1i, x2i, x3i, v1i, v2i, v3i  = values("twoParticle_RK_32000")
 V0=V[0]
